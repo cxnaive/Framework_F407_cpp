@@ -11,9 +11,6 @@
 本机器人代码为基于2022Framework_F407的第一辆步兵机器人
 
 ## 待办
-frame
-soft_reset
-led_timer
 
 本车
 chassis斜坡
