@@ -21,6 +21,8 @@ main函数位于 Core/Src/main.c
 - C++与面向对象基础，大量使用C++11相关内容
 - 电控新框架相关知识，在ones和git上
 
+**框架相关资料可见 Tutorials 文件夹**
+
 本代码中vscode代码格式统一为：
 
 { BasedOnStyle: Google, IndentWidth: 4, TabWidth: 4, ColumnLimit: 0 }
