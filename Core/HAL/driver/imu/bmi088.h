@@ -19,7 +19,7 @@ class bmi088_imu {
         BSP_SPI_Typedef* spi_device;
         BSP_PWM_Typedef* pwm_device;
         BSP_GPIO_Typedef* accel_gpio;
-        BSP_GPIO_Typedef* gyro_index;
+        BSP_GPIO_Typedef* gyro_gpio;
         float temp_target;
         monitor::lost_callback lost_callback;
     };

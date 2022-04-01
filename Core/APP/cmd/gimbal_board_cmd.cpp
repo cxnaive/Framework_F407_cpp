@@ -5,7 +5,10 @@
 #include "bsp_uart.h"
 #include "pub_sub.h"
 #include "string.h"
+#define INIT_FORWARD 3152  // 云台朝向底盘正前时云台yaw编码器值
+
 void board_com_lost(void* obj) {
+    //暂时没有效用
 }
 
 //此处涉及到lamdba表达式的应用
@@ -43,16 +46,38 @@ gimbal_board_cmd::gimbal_board_cmd(bmi088_imu& _imu) : sender([&] {
                                                            config.pwm_device = &BSP_PWM_Typedef::pwm_ports[PWM_BUZZER_PORT];
                                                            config.music = &buzzer::buzzer_musics[1];
                                                            return config;
-                                                       }()),
-                                                       gimbal_imu(_imu) {
+                                                       }()) {
     robot_mode = robot_stop;
     robot_ready = 0;
     autoaim_mode = auto_aim_off;
+    gimbal_upload_data = NULL;
     //指针指向接收的实际数据
     board_recv = (chassis_board_send*)recver.data_rx.data.data();
     memset(&gimbal_control, 0, sizeof(cmd_gimbal));
     memset(&shoot_control, 0, sizeof(cmd_shoot));
     memset(&board_send, 0, sizeof(gimbal_board_send));
+}
+
+float get_offset_angle(short init_forward, short now_encoder) {
+    short tmp = 0;
+    if (init_forward < 4096) {
+        if (now_encoder > init_forward && now_encoder <= 4096 + init_forward) {
+            tmp = now_encoder - init_forward;
+        } else if (now_encoder > 4096 + init_forward) {
+            tmp = -8192 + now_encoder - init_forward;
+        } else {
+            tmp = now_encoder - init_forward;
+        }
+    } else {
+        if (now_encoder > init_forward) {
+            tmp = now_encoder - init_forward;
+        } else if (now_encoder <= init_forward && now_encoder >= init_forward - 4096) {
+            tmp = now_encoder - init_forward;
+        } else {
+            tmp = now_encoder + 8192 - init_forward;
+        }
+    }
+    return tmp * 360.0 / 8192.0;
 }
 
 void gimbal_board_cmd::update() {
@@ -66,9 +91,19 @@ void gimbal_board_cmd::update() {
         robot_mode = robot_stop;  //板间通信掉线，机器人停止
     }
 
-    //判断云台IMU在线且初始化完成
-    if (!gimbal_imu.monitor_item.is_online() || gimbal_imu.bias_init_success == 0) {
-        robot_mode = robot_stop;  //云台IMU掉线或尚未初始化完成
+    //接收云台回传信息，判断云台IMU在线且初始化完成
+    static subscriber<upload_gimbal*> gimbal_upload_suber("upload_gimbal");
+    if (!gimbal_upload_suber.empty()) {
+        gimbal_upload_data = gimbal_upload_suber.pop();
+        if (gimbal_upload_data->gimbal_status == module_lost) {  //云台模块掉线
+            robot_mode = robot_stop;
+        }
+        //计算云台和底盘的offset_angle
+        board_send.chassis_speed.offset_angle = get_offset_angle(INIT_FORWARD, *gimbal_upload_data->yaw_encoder);
+    }
+
+    if (gimbal_upload_data == NULL) {  //云台模块初始化尚未完成，回传数据未收到
+        robot_mode = robot_stop;
     }
 
     //如果除遥控器之外都已经上线，说明机器人初始化完成，进入ready状态
@@ -258,9 +293,9 @@ void gimbal_board_cmd::mouse_key_mode_update() {
             gimbal_control.pitch -= -0.1f * ((float)remote.data.mouse.y);
         } else {
             //计算真实yaw值
-            float yaw_target = pc.pc_recv_data->yaw * 8192.0 / 2 / pi + gimbal_imu.data.round * 8192.0;
-            if (pc.pc_recv_data->yaw - gimbal_imu.data.euler[2] > pi) yaw_target -= 8192;
-            if (pc.pc_recv_data->yaw - gimbal_imu.data.euler[2] < -pi) yaw_target += 8192;
+            float yaw_target = pc.pc_recv_data->yaw * 8192.0 / 2 / pi + gimbal_upload_data->gimbal_imu->round * 8192.0;
+            if (pc.pc_recv_data->yaw - gimbal_upload_data->gimbal_imu->euler[2] > pi) yaw_target -= 8192;
+            if (pc.pc_recv_data->yaw - gimbal_upload_data->gimbal_imu->euler[2] < -pi) yaw_target += 8192;
             gimbal_control.yaw = yaw_target;
             gimbal_control.pitch = pc.pc_recv_data->roll * 8192.0 / 2 / pi;  // 根据当前情况决定，pitch轴反馈为陀螺仪roll
         }
@@ -287,8 +322,8 @@ void gimbal_board_cmd::mouse_key_mode_update() {
 }
 
 void gimbal_board_cmd::send_cmd_and_data() {
-    static publisher<cmd_gimbal*> gimbal_puber("gimbal");
-    static publisher<cmd_shoot*> shoot_puber("shoot");
+    static publisher<cmd_gimbal*> gimbal_puber("cmd_gimbal");
+    static publisher<cmd_shoot*> shoot_puber("cmd_shoot");
     gimbal_puber.push(&gimbal_control);
     shoot_puber.push(&shoot_control);
     sender.send((uint8_t*)&board_send, sizeof(board_send));

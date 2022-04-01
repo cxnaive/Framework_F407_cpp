@@ -69,7 +69,6 @@ class can_motor {
    private:
     static constexpr uint32_t identifiers[3] = {0x200, 0x1FF, 0x2FF};
     static can_motor_registry can_reg[DEVICE_CAN_CNT];  //每一个CAN总线都需要
-    can_motor_config config;
     uint32_t motor_rx_id;                                                                              //电机接收反馈的can报文ID
     std::queue<float> pos_delta_queue;                                                                 //计算角速度的循环队列
     float position_sum;                                                                                //队列中所有值的和
@@ -79,6 +78,7 @@ class can_motor {
 
    public:
     friend void Motor_Loop();
+    can_motor_config config;
     Motor_Enable_e motor_enable;
     short fdbPosition;       //电机的编码器反馈值
     short last_fdbPosition;  //电机上次的编码器反馈值

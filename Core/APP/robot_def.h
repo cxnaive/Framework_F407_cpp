@@ -9,6 +9,7 @@
 // #define CHASSIS_BOARD
 
 #include "stdint.h"
+#include <imu_data.h>
 #pragma pack(1)
 // 对模块是否掉线的定义
 enum Module_status {
@@ -106,6 +107,13 @@ struct cmd_gimbal {
     float pitch;
 
     float rotate_feedforward;  //小陀螺前馈
+};
+
+// 云台回传cmd的数据
+struct upload_gimbal{
+    Module_status gimbal_status;
+    imu_data* gimbal_imu;
+    short* yaw_encoder;
 };
 
 // 板间通信定义

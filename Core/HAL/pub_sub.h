@@ -200,13 +200,19 @@ class subscriber {
      * @details 如果没有获得消息，返回NULL
      * @return 读取到的消息
      */
-    T *pop() {
-        if (!p_msg) return NULL;
-        if (fifo.empty()) return NULL;
-        temp_value = std::move(fifo.front());
+    T pop() {
+        // if (!p_msg) return T();
+        // if (fifo.empty()) return T();
+        T temp_value = std::move(fifo.front());
         fifo.pop();
-        return &temp_value;
+        return temp_value;
     }
+
+    //在pop前一定要检查empty
+    bool empty() {
+        return fifo.empty();
+    }
+
     /**
      * @brief 清空接收缓冲区
      */

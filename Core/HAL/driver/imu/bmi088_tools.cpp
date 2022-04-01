@@ -25,36 +25,36 @@ void bmi088_imu::spi_read_multi(uint8_t reg, uint8_t* buf, uint8_t len) {
 }
 
 void bmi088_imu::gyro_write(uint8_t reg, uint8_t data) {
-    config.gyro_index->set(0);
+    config.gyro_gpio->set(0);
     spi_write_reg(reg, data);
-    config.gyro_index->set(1);
+    config.gyro_gpio->set(1);
 }
 void bmi088_imu::gyro_read(uint8_t reg, uint8_t* buf) {
-    config.gyro_index->set(0);
+    config.gyro_gpio->set(0);
     spi_send_recv_byte(reg | 0x80);
     *buf = spi_send_recv_byte(0x55);
-    config.gyro_index->set(1);
+    config.gyro_gpio->set(1);
 }
 void bmi088_imu::gyro_read(uint8_t reg, uint8_t* buf, uint8_t len) {
-    config.gyro_index->set(0);
+    config.gyro_gpio->set(0);
     spi_read_multi(reg, buf, len);
-    config.gyro_index->set(1);
+    config.gyro_gpio->set(1);
 }
 void bmi088_imu::accel_write(uint8_t reg, uint8_t data) {
-    config.gyro_index->set(0);
+    config.accel_gpio->set(0);
     spi_write_reg(reg, data);
-    config.gyro_index->set(1);
+    config.accel_gpio->set(1);
 }
 void bmi088_imu::accel_read(uint8_t reg, uint8_t* buf) {
-    config.gyro_index->set(0);
+    config.accel_gpio->set(0);
     spi_send_recv_byte(reg | 0x80);
     spi_send_recv_byte(0x55);
     *buf = spi_send_recv_byte(0x55);
-    config.gyro_index->set(1);
+    config.accel_gpio->set(1);
 }
 void bmi088_imu::accel_read(uint8_t reg, uint8_t* buf, uint8_t len) {
-    config.gyro_index->set(0);
+    config.accel_gpio->set(0);
     spi_send_recv_byte(reg | 0x80);
     spi_read_multi(reg, buf, len);
-    config.gyro_index->set(1);
+    config.accel_gpio->set(1);
 }

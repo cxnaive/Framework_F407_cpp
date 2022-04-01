@@ -148,6 +148,8 @@ Core/HAL/driver/ws2812b/ws2812b.cpp \
 Core/HAL/driver/eio/spi_eio.cpp \
 Core/HAL/driver/motor/can_motor.cpp \
 Core/APP/cmd/gimbal_board_cmd.cpp \
+Core/APP/gimbal/gimbal.cpp \
+Core/APP/shoot/shoot.cpp \
 Core/APP/app.cpp \
 
 # ASM sources

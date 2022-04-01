@@ -210,3 +210,11 @@ void Motor_Loop() {
         }
     }
 }
+
+void can_motor::stop(){
+    motor_enable = MOTOR_STOP;
+}
+
+void can_motor::enable(){
+    motor_enable = MOTOR_ENABLE;
+}
