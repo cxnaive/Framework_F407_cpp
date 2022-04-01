@@ -1,7 +1,6 @@
 #ifndef _ROBOT_CMD_H
 #define _ROBOT_CMD_H
 #include <DT7_DR16.h>
-#include <bmi088.h>
 #include <buzzer.h>
 #include <can_pc.h>
 #include <pub_sub.h>
@@ -29,7 +28,7 @@ class gimbal_board_cmd {
     void send_cmd_and_data();      //发布指令和板间通信
 
    public:
-    gimbal_board_cmd(bmi088_imu& _imu);
+    gimbal_board_cmd();
     void update();
 };
 

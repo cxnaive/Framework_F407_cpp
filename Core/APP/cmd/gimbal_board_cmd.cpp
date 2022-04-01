@@ -3,6 +3,7 @@
 #include "bsp_can.h"
 #include "bsp_log.h"
 #include "bsp_uart.h"
+#include "common.h"
 #include "pub_sub.h"
 #include "string.h"
 #define INIT_FORWARD 3152  // 云台朝向底盘正前时云台yaw编码器值
@@ -12,41 +13,41 @@ void board_com_lost(void* obj) {
 }
 
 //此处涉及到lamdba表达式的应用
-gimbal_board_cmd::gimbal_board_cmd(bmi088_imu& _imu) : sender([&] {
-                                                           //板间通信：发
-                                                           can_send::can_send_config config;
-                                                           config.device = &BSP_CanTypeDef::can_devices[1];
-                                                           config.can_identifier = 0x004;
-                                                           return config;
-                                                       }()),
-                                                       recver([&] {
-                                                           //板间通信：收
-                                                           can_recv::can_recv_config config;
-                                                           config.device = &BSP_CanTypeDef::can_devices[1];
-                                                           config.can_identifier = 0x003;
-                                                           config.notify_func = NULL;
-                                                           config.lost_callback = board_com_lost;
-                                                           config.data_len = sizeof(gimbal_board_send);
-                                                           return config;
-                                                       }()),
-                                                       pc([&] {
-                                                           //小电脑通信配置
-                                                           canpc::canpc_config config;
-                                                           config.device = &BSP_CanTypeDef::can_devices[0];
-                                                           config.recv_identifer = 0x001;
-                                                           return config;
-                                                       }()),
-                                                       remote([&] {
-                                                           dt7Remote::dt7_config config;
-                                                           config.uart_device = &BSP_UART_Typedef::uart_ports[UART_REMOTE_PORT];
-                                                           return config;
-                                                       }()),
-                                                       board_buzzer([&] {
-                                                           buzzer::buzzer_config config;
-                                                           config.pwm_device = &BSP_PWM_Typedef::pwm_ports[PWM_BUZZER_PORT];
-                                                           config.music = &buzzer::buzzer_musics[1];
-                                                           return config;
-                                                       }()) {
+gimbal_board_cmd::gimbal_board_cmd() : sender([&] {
+                                           //板间通信：发
+                                           can_send::can_send_config config;
+                                           config.device = &BSP_CanTypeDef::can_devices[1];
+                                           config.can_identifier = 0x004;
+                                           return config;
+                                       }()),
+                                       recver([&] {
+                                           //板间通信：收
+                                           can_recv::can_recv_config config;
+                                           config.device = &BSP_CanTypeDef::can_devices[1];
+                                           config.can_identifier = 0x003;
+                                           config.notify_func = NULL;
+                                           config.lost_callback = board_com_lost;
+                                           config.data_len = sizeof(gimbal_board_send);
+                                           return config;
+                                       }()),
+                                       pc([&] {
+                                           //小电脑通信配置
+                                           canpc::canpc_config config;
+                                           config.device = &BSP_CanTypeDef::can_devices[0];
+                                           config.recv_identifer = 0x001;
+                                           return config;
+                                       }()),
+                                       remote([&] {
+                                           dt7Remote::dt7_config config;
+                                           config.uart_device = &BSP_UART_Typedef::uart_ports[UART_REMOTE_PORT];
+                                           return config;
+                                       }()),
+                                       board_buzzer([&] {
+                                           buzzer::buzzer_config config;
+                                           config.pwm_device = &BSP_PWM_Typedef::pwm_ports[PWM_BUZZER_PORT];
+                                           config.music = &buzzer::buzzer_musics[1];
+                                           return config;
+                                       }()) {
     robot_mode = robot_stop;
     robot_ready = 0;
     autoaim_mode = auto_aim_off;
@@ -98,7 +99,7 @@ void gimbal_board_cmd::update() {
         if (gimbal_upload_data->gimbal_status == module_lost) {  //云台模块掉线
             robot_mode = robot_stop;
         }
-        //计算云台和底盘的offset_angle
+        //计算云台和底盘的夹角 offset_angle
         board_send.chassis_speed.offset_angle = get_offset_angle(INIT_FORWARD, *gimbal_upload_data->yaw_encoder);
     }
 

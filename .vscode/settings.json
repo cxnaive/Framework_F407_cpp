@@ -56,6 +56,7 @@
         "ratio": "cpp",
         "iostream": "cpp",
         "stop_token": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "stm32f4xx_hal.h": "c"
     }
 }

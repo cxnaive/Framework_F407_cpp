@@ -127,6 +127,7 @@ Core/BSP/lib/bsp_delay.cpp \
 Core/BSP/lib/bsp_log.cpp \
 Core/BSP/lib/bsp_random.cpp \
 Core/BSP/lib/bsp_reset.cpp \
+Core/BSP/lib/bsp_time.cpp \
 Core/HAL/hal.cpp \
 Core/HAL/lib/common.cpp \
 Core/HAL/lib/soft_crc.cpp \
