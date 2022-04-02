@@ -8,26 +8,25 @@
 #include "string.h"
 #define INIT_FORWARD 3152  // 云台朝向底盘正前时云台yaw编码器值
 
-void board_com_lost(void* obj) {
+void gimbal_board_com_lost(void* obj) {
     //暂时没有效用
 }
 
 //此处涉及到lamdba表达式的应用
 gimbal_board_cmd::gimbal_board_cmd() : sender([&] {
                                            //板间通信：发
-                                           can_send::can_send_config config;
+                                           can_send<gimbal_board_send>::can_send_config config;
                                            config.device = &BSP_CanTypeDef::can_devices[1];
                                            config.can_identifier = 0x004;
                                            return config;
                                        }()),
                                        recver([&] {
                                            //板间通信：收
-                                           can_recv::can_recv_config config;
+                                           can_recv<chassis_board_send>::can_recv_config config;
                                            config.device = &BSP_CanTypeDef::can_devices[1];
                                            config.can_identifier = 0x003;
                                            config.notify_func = NULL;
-                                           config.lost_callback = board_com_lost;
-                                           config.data_len = sizeof(gimbal_board_send);
+                                           config.lost_callback = gimbal_board_com_lost;
                                            return config;
                                        }()),
                                        pc([&] {
@@ -53,7 +52,7 @@ gimbal_board_cmd::gimbal_board_cmd() : sender([&] {
     autoaim_mode = auto_aim_off;
     gimbal_upload_data = NULL;
     //指针指向接收的实际数据
-    board_recv = (chassis_board_send*)recver.data_rx.data.data();
+    board_recv = recver.recv_data;
     memset(&gimbal_control, 0, sizeof(cmd_gimbal));
     memset(&shoot_control, 0, sizeof(cmd_shoot));
     memset(&board_send, 0, sizeof(gimbal_board_send));
@@ -88,7 +87,7 @@ void gimbal_board_cmd::update() {
     robot_mode = robot_run;
 
     //判断板间通信在线
-    if (!recver.monitor_item.is_online()) {
+    if (!recver.is_online()) {
         robot_mode = robot_stop;  //板间通信掉线，机器人停止
     }
 
@@ -327,5 +326,5 @@ void gimbal_board_cmd::send_cmd_and_data() {
     static publisher<cmd_shoot*> shoot_puber("cmd_shoot");
     gimbal_puber.push(&gimbal_control);
     shoot_puber.push(&shoot_control);
-    sender.send((uint8_t*)&board_send, sizeof(board_send));
+    sender.send(board_send);
 }

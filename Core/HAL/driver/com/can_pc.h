@@ -19,8 +19,8 @@ class canpc {
 
    private:
     canpc_config config;
-    can_send sender;
-    can_recv recver;
+    can_send<pc_send> sender;
+    can_recv<pc_recv> recver;
 
    public:
     pc_recv* pc_recv_data;

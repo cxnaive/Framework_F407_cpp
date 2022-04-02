@@ -138,8 +138,6 @@ Core/HAL/lib/MahonyAHRS.cpp \
 Core/HAL/lib/pid.cpp \
 Core/HAL/monitor/monitor.cpp \
 Core/HAL/driver/buzzer/buzzer.cpp \
-Core/HAL/driver/com/can_send.cpp \
-Core/HAL/driver/com/can_recv.cpp \
 Core/HAL/driver/com/can_pc.cpp \
 Core/HAL/driver/imu/imu_data.cpp \
 Core/HAL/driver/imu/bmi088.cpp \
