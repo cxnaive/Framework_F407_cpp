@@ -26,10 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-// #include "app.h"
-#include "bsp.h"
-// #include "hal.h"
-#include "stdio.h"
+#include "warpper.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -189,7 +186,8 @@ void StartDefaultTask(void *argument)
     portTickType currentTimeDefault;
     currentTimeDefault = xTaskGetTickCount();
     for (;;) {
-        // APP_Layer_default_loop();
+        //蜂鸣器
+        Buzzer_Loop();
         vTaskDelayUntil(&currentTimeDefault, 100);
     }
   /* USER CODE END StartDefaultTask */
@@ -209,7 +207,7 @@ void StartImuTask(void *argument)
     portTickType currentTimeImu;
     currentTimeImu = xTaskGetTickCount();
     for (;;) {
-        // HAL_Imu_Loop();
+        Imu_Loop();
         vTaskDelayUntil(&currentTimeImu, 2);
     }
   /* USER CODE END StartImuTask */
@@ -248,7 +246,7 @@ void StartMotorTask(void *argument)
   currentTimeMotor = xTaskGetTickCount();
   /* Infinite loop */
   for(;;){
-    // HAL_Motor_Calc_Loop();
+    Motor_Loop();
     vTaskDelayUntil(&currentTimeMotor, 1);
   }
   /* USER CODE END StartMotorTask */
@@ -269,7 +267,7 @@ void StartMonitorTask(void *argument)
   currentTimeMonitor = xTaskGetTickCount();
   for(;;)
   {
-    // Monitor_Loop();
+    Monitor_Loop();
     vTaskDelayUntil(&currentTimeMonitor, 100);
   }
   /* USER CODE END StartMonitorTask */
@@ -290,7 +288,7 @@ void StartRobotCMDTask(void *argument)
   currentTimeRobotCMD = xTaskGetTickCount();
   for(;;)
   {
-    // APP_RobotCmd_Loop();
+    APP_Loop();
     vTaskDelayUntil(&currentTimeRobotCMD, 2);
   }
   /* USER CODE END StartRobotCMDTask */
@@ -311,7 +309,8 @@ void StartCapTask(void *argument)
   currentTimeSuperCap = xTaskGetTickCount();
   for(;;)
   {
-    // HAL_Super_cap_wuli_Loop();
+    Supercap_wuli_Loop();
+    SPI_eio_Loop();
     vTaskDelayUntil(&currentTimeSuperCap, 2);
   }
   /* USER CODE END StartCapTask */

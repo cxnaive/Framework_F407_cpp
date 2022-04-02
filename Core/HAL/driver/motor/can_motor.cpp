@@ -84,7 +84,7 @@ uint32_t can_motor::can_motor_registry::register_motor(can_motor* motor) {
     }
 }
 
-can_motor::can_motor_registry can_reg[DEVICE_CAN_CNT];
+can_motor::can_motor_registry can_motor::can_reg[DEVICE_CAN_CNT];
 
 can_motor::can_motor(const can_motor_config& _config) : monitor_item(_config.lost_callback, 5, this) {
     //初始化
@@ -166,7 +166,7 @@ void Motor_Loop() {
             uint8_t identifier_send = 0;
             short buf[4] = {0};
             for (size_t id = 0; id < 4; ++id) {
-                can_motor* obj = can_reg[can_index].identifier_registry[identifier][id];
+                can_motor* obj = can_motor::can_reg[can_index].identifier_registry[identifier][id];
                 if (obj == NULL) continue;
                 identifier_send = 1;
                 if (obj->config.motor_pid_model == can_motor::POSITION_LOOP) {

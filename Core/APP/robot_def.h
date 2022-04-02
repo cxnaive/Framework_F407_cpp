@@ -5,8 +5,8 @@
 
 // 双板方案，定义主控类型，上板或下板
 // 按照要烧录的主控类型 **必须**定义且仅定义一个 另一个注释
-#define GIMBAL_BOARD
-// #define CHASSIS_BOARD
+// #define GIMBAL_BOARD
+#define CHASSIS_BOARD
 
 #include <imu_data.h>
 

@@ -5,7 +5,7 @@ extern "C" {
 
 //此处定义所有的提供给C接口的函数
 
-//主要是需要在freertos/定时器中断内循环调用的函数
+//主要是需要在 freertos.c/中断 内调用的函数
 
 //初始化函数
 void main_init();
