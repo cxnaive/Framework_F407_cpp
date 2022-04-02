@@ -103,7 +103,7 @@ void gimbal_board_cmd::update() {
         board_send.chassis_speed.offset_angle = get_offset_angle(INIT_FORWARD, *gimbal_upload_data->yaw_encoder);
     }
 
-    if (gimbal_upload_data == NULL) {  //云台模块初始化尚未完成，回传数据未收到
+    if (gimbal_upload_data == NULL) {  //云台模块初始化尚未完成，第一次回传数据未收到
         robot_mode = robot_stop;
     }
 

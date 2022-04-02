@@ -1,5 +1,5 @@
-#ifndef _ROBOT_CMD_H
-#define _ROBOT_CMD_H
+#ifndef _GIMBAL_ROBOT_CMD_H
+#define _GIMBAL_ROBOT_CMD_H
 #include <DT7_DR16.h>
 #include <buzzer.h>
 #include <can_pc.h>

@@ -119,6 +119,7 @@ void shoot::update() {
 }
 
 void shoot::load_update() {
+    if (cmd_data == NULL) return;
     if (cmd_data->heat_limit_remain < UNIT_HEAT_17MM) {
         cmd_data->bullet_mode = bullet_stop;
     }

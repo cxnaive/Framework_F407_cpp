@@ -8,8 +8,9 @@
 #define GIMBAL_BOARD
 // #define CHASSIS_BOARD
 
-#include "stdint.h"
 #include <imu_data.h>
+
+#include "stdint.h"
 #pragma pack(1)
 // 对模块是否掉线的定义
 enum Module_status {
@@ -50,7 +51,7 @@ enum Friction_mode {
 //弹仓盖模式
 enum Magazine_mode {
     magazine_close = 0,  //开弹仓
-    magazine_open      //关弹仓
+    magazine_open        //关弹仓
 };
 
 //云台模式
@@ -62,10 +63,10 @@ enum Gimbal_mode {
 
 //自瞄模式
 enum AutoAim_mode {
-    auto_aim_off = 0,    //关闭自瞄
-    auto_aim_normal,     //正常自瞄
+    auto_aim_off = 0,     //关闭自瞄
+    auto_aim_normal,      //正常自瞄
     auto_aim_buff_small,  //小能量机关
-    auto_aim_buff_big    //大能量机关
+    auto_aim_buff_big     //大能量机关
 };
 
 // 机器人模块控制量定义
@@ -110,10 +111,16 @@ struct cmd_gimbal {
 };
 
 // 云台回传cmd的数据
-struct upload_gimbal{
+struct upload_gimbal {
     Module_status gimbal_status;
     imu_data* gimbal_imu;
     short* yaw_encoder;
+};
+
+//底盘模块回传cmd的数据
+struct upload_chassis {
+    Module_status chassis_status;
+    imu_data* chassis_imu;
 };
 
 // 板间通信定义

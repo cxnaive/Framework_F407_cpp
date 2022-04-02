@@ -128,6 +128,7 @@ Core/BSP/lib/bsp_log.cpp \
 Core/BSP/lib/bsp_random.cpp \
 Core/BSP/lib/bsp_reset.cpp \
 Core/BSP/lib/bsp_time.cpp \
+Core/BSP/lib/bsp_math.cpp \
 Core/HAL/hal.cpp \
 Core/HAL/lib/common.cpp \
 Core/HAL/lib/soft_crc.cpp \
@@ -149,8 +150,10 @@ Core/HAL/driver/ws2812b/ws2812b.cpp \
 Core/HAL/driver/eio/spi_eio.cpp \
 Core/HAL/driver/motor/can_motor.cpp \
 Core/APP/cmd/gimbal_board_cmd.cpp \
+Core/APP/cmd/chassis_board_cmd.cpp \
 Core/APP/gimbal/gimbal.cpp \
 Core/APP/shoot/shoot.cpp \
+Core/APP/chassis/chassis.cpp \
 Core/APP/app.cpp \
 
 # ASM sources
@@ -248,7 +251,7 @@ C_INCLUDES += \
 -ICore/HAL/monitor \
 -ICore/HAL \
 -ICore/APP \
--ICore/APP/command \
+-ICore/APP/cmd \
 -ICore/APP/shoot \
 -ICore/APP/gimbal \
 -ICore/APP/chassis \
