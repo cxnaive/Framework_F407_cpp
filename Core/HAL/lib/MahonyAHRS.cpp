@@ -8,11 +8,13 @@ MahonyAHRS::MahonyAHRS(float _twoKp, float _twoKi, float _sampleFreq) {
     twoKp = _twoKp;
     twoKi = _twoKi;
     sampleFreq = _sampleFreq;
+    clear();
 }
 void MahonyAHRS::clear() {
     q0 = 1.0f;
     q1 = q2 = q3 = 0.0f;
     integralFBx = integralFBy = integralFBz = 0.0f;
+    euler[0] = euler[1] = euler[2] = 0;
 }
 void MahonyAHRS::update(float gx, float gy, float gz, float ax, float ay, float az) {
     float recipNorm;

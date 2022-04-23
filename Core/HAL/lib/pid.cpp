@@ -105,8 +105,8 @@ PID::PID_config PID::pos_pid_config(float kp, float ki, float kd, float errormax
     config.KP = kp;
     config.KI = ki;
     config.KD = kd;
+    config.outputMax = outputmax;
     config.error_max = errormax;
-    config.error_preload = outputmax;
     config.PID_Mode = PID_POSITION;
     return config;
 }

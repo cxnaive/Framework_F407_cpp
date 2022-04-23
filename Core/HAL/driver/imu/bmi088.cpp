@@ -14,11 +14,11 @@
 #define BMI088_BIAS_INIT_DISCARD 1000
 #define BMI088_BIAS_INIT_COUNT 2000
 //加热PID配置
-#define HEAT_PID_KP 1600.0f        // kp of temperature control PID
+#define HEAT_PID_KP 2000.0f        // kp of temperature control PID
 #define HEAT_PID_KI 0.2f           // ki of temperature control PID
 #define HEAT_PID_KD 0.0f           // kd of temperature control PID
 #define HEAT_PID_MAX_OUT 1000.0f   // max out of temperature control PID
-#define HEAT_PID_MAX_ERROR 900.0f  // max out of temperature control PID
+#define HEAT_PID_MAX_ERROR 1000.0f  // max out of temperature control PID
 // BMI088加速度计配置数组
 static uint8_t BMI088_accel_config[BMI088_WRITE_ACCEL_REG_NUM][3] = {{BMI088_ACC_PWR_CTRL, BMI088_ACC_ENABLE_ACC_ON, BMI088_ACC_PWR_CTRL_ERROR},
                                                                      {BMI088_ACC_PWR_CONF, BMI088_ACC_PWR_ACTIVE_MODE, BMI088_ACC_PWR_CONF_ERROR},
@@ -45,6 +45,7 @@ bmi088_imu::bmi088_imu(const bmi088_config& _config) : heat_pid(PID::pos_pid_con
                                                        madgwick_solver(0.2, 500.0f),
                                                        monitor_item(_config.lost_callback, 5, this) {
     init_error = BMI088_NO_ERROR;
+    config = _config;
     bias_init_success = 0;
     do {
         accel_init();
@@ -204,6 +205,9 @@ void bmi088_imu::update() {
     data.gyro[0] -= gyrobias[0];
     data.gyro[1] -= gyrobias[1];
     data.gyro[2] -= gyrobias[2];
+    data.gyro_deg[0] = data.gyro[0] * RAD2DEG;
+    data.gyro_deg[1] = data.gyro[1] * RAD2DEG;
+    data.gyro_deg[2] = data.gyro[2] * RAD2DEG;
     mahony_solver.update(data.gyro[0], data.gyro[1], data.gyro[2], data.accel[0], data.accel[1], data.accel[2]);
     data.update_euler(mahony_solver.euler);
 }

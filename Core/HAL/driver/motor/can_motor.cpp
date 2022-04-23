@@ -91,6 +91,7 @@ can_motor::can_motor(const can_motor_config& _config) : monitor_item(_config.los
     config = _config;
     motor_enable = MOTOR_STOP;
     fdbPosition = last_fdbPosition = fdbSpeed = electric_current = round = current_output = 0;
+    position_sum = 0;
     temperature = 0;
     real_position = last_real_position = line_speed = velocity = 0;
     speed_pid.setConfig(_config.config_speed);

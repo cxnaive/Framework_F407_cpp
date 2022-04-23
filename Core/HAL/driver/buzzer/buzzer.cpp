@@ -73,6 +73,7 @@ void buzzer::start() {
     finished = 0;
     count = 0;
     is_run = true;
+    config.pwm_device->pwm_start();
 }
 
 void buzzer::update() {
