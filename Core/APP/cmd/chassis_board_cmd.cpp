@@ -40,16 +40,16 @@ void chassis_board_cmd::update() {
         robot_mode = robot_stop;  //板间通信掉线，机器人停止
     }
 
-    //接收底盘回传信息，判断云台IMU在线且初始化完成
+    //接收底盘回传信息，判断底盘IMU在线且初始化完成
     static subscriber<upload_chassis*> chassis_upload_suber("upload_chassis");
     if (!chassis_upload_suber.empty()) {
         chassis_upload_data = chassis_upload_suber.pop();
-        if (chassis_upload_data->chassis_status == module_lost) {  //云台模块掉线
+        if (chassis_upload_data->chassis_status == module_lost) {  //底盘模块掉线
             robot_mode = robot_stop;
         }
     }
 
-    if (chassis_upload_data == NULL) {  //云台模块初始化尚未完成，第一次回传数据未收到
+    if (chassis_upload_data == NULL) {  //底盘模块初始化尚未完成，第一次回传数据未收到
         robot_mode = robot_stop;
     } else {
         board_send.gyro_yaw = chassis_upload_data->chassis_imu->euler[2];

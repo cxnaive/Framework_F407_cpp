@@ -186,7 +186,7 @@ void StartDefaultTask(void *argument)
     portTickType currentTimeDefault;
     currentTimeDefault = xTaskGetTickCount();
     for (;;) {
-        //蜂鸣器
+        //buzzer
         Buzzer_Loop();
         vTaskDelayUntil(&currentTimeDefault, 100);
     }
