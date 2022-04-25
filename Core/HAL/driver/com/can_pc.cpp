@@ -7,6 +7,7 @@ canpc::canpc(const canpc_config& _config) : sender({_config.device, _config.send
     // pc_recv_data = (pc_recv*)(recver.data_rx.data.data());
     pc_recv_data = recver.recv_data;
     data_updated = &recver.data_updated;
+    memset(&pc_send_data,0,sizeof(pc_send));
 }
 
 void canpc::send(const pc_send& data) {

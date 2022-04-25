@@ -86,7 +86,7 @@ void shoot::update() {
     if (shoot_suber.empty()) return;  //没有控制信息
 
     cmd_data = shoot_suber.pop();
-    if (cmd_data->friction_mode == friction_stop) {
+    if (cmd_data->shoot_mode == shoot_stop) {
         load.stop();
         friction_a.stop();
         friction_b.stop();
@@ -121,14 +121,14 @@ void shoot::update() {
 void shoot::load_update() {
     if (cmd_data == NULL) return;
     if (cmd_data->heat_limit_remain < UNIT_HEAT_17MM) {
-        cmd_data->bullet_mode = bullet_stop;
+        cmd_data->bullet_mode = bullet_holdon;
     }
     uint32_t time_now = BSP_sys_time_ms();
     static int load_delta_pos = 8192 * MOTOR_DECELE_RATIO / NUM_PER_CIRCLE;
     //仍然在冷却时间
     if (time_now < cooldown_start + cooldown_time) return;
     switch (cmd_data->bullet_mode) {
-        case bullet_stop:
+        case bullet_holdon:
             //快速停止
             load.config.motor_pid_model = can_motor::POSITION_LOOP;
             load.position_pid.ref = load.real_position;  //待在原地

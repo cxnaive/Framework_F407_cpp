@@ -100,6 +100,10 @@ void gimbal_board_cmd::update() {
         }
         //计算云台和底盘的夹角 offset_angle
         board_send.chassis_speed.offset_angle = get_offset_angle(INIT_FORWARD, *gimbal_upload_data->yaw_encoder);
+        pc.pc_send_data.euler[0] = gimbal_upload_data->gimbal_imu->euler[0];
+        pc.pc_send_data.euler[1] = gimbal_upload_data->gimbal_imu->euler[1];
+        pc.pc_send_data.euler[2] = gimbal_upload_data->gimbal_imu->euler[2];
+        pc.pc_send_data.auto_mode_flag = auto_aim_normal;
     }
 
     if (gimbal_upload_data == NULL) {  //云台模块初始化尚未完成，第一次回传数据未收到
@@ -145,8 +149,8 @@ void gimbal_board_cmd::stop_mode_update() {
     board_send.robot_mode = robot_stop;
     board_send.chassis_mode = chassis_stop;
     gimbal_control.gimbal_mode = gimbal_stop;
-    shoot_control.friction_mode = friction_stop;
-    shoot_control.bullet_mode = bullet_stop;
+    shoot_control.shoot_mode = shoot_stop;
+    shoot_control.bullet_mode = bullet_holdon;
 }
 
 void gimbal_board_cmd::remote_mode_update() {
@@ -171,14 +175,14 @@ void gimbal_board_cmd::remote_mode_update() {
 
     //发射机构控制
     if (remote.data.rc.s1 == 2) {
-        shoot_control.bullet_mode = bullet_stop;      //在发射停止位关闭播弹轮
-        shoot_control.friction_mode = friction_stop;  //在发射停止位关闭摩擦轮
+        shoot_control.bullet_mode = bullet_holdon;      //在发射停止位关闭播弹轮
+        shoot_control.shoot_mode = shoot_stop;  //在发射停止位关闭摩擦轮
         //弹仓盖控制
         if (remote.data.rc.ch4 > CHx_BIAS + 400) shoot_control.mag_mode = magazine_open;
         if (remote.data.rc.ch4 < CHx_BIAS - 400) shoot_control.mag_mode = magazine_close;
     } else {
         //发弹控制
-        shoot_control.friction_mode = friction_run;                                //开摩擦轮
+        shoot_control.shoot_mode = shoot_run;                                //开摩擦轮
         shoot_control.bullet_mode = bullet_continuous;                             //连续发射
         shoot_control.fire_rate = 0.01f * (float)(remote.data.rc.ch4 - CHx_BIAS);  //射频
         shoot_control.heat_limit_remain = board_recv->heat_limit_remain;           //下板传回的热量剩余
@@ -242,6 +246,7 @@ void gimbal_board_cmd::mouse_key_mode_update() {
             autoaim_mode = auto_aim_off;
         }
     }
+    pc.pc_send_data.auto_mode_flag = autoaim_mode;
     // c:开关弹仓
     if (remote.data.key_single_press_cnt.c != remote.last_data.key_single_press_cnt.c) {
         if (shoot_control.mag_mode == magazine_open) {
@@ -305,18 +310,18 @@ void gimbal_board_cmd::mouse_key_mode_update() {
 
     //发射机构控制参数
     if (remote.data.rc.s1 == 2) {
-        shoot_control.bullet_mode = bullet_stop;
-        shoot_control.friction_mode = friction_stop;
+        shoot_control.bullet_mode = bullet_holdon;
+        shoot_control.shoot_mode = shoot_stop;
     } else {
         //发弹控制，单发，双发, 射频和小电脑控制待完善
-        shoot_control.friction_mode = friction_run;                       //开摩擦轮
+        shoot_control.shoot_mode = shoot_stop;                       //开摩擦轮
         shoot_control.heat_limit_remain = board_recv->heat_limit_remain;  //下板传回的热量剩余
         shoot_control.bullet_speed = board_recv->bullet_speed_max;        //下板传回的子弹速度上限
         shoot_control.fire_rate = 3;                                      //固定射频
         if (remote.data.mouse.press_l) {
             shoot_control.bullet_mode = bullet_continuous;
         } else {
-            shoot_control.bullet_mode = bullet_stop;
+            shoot_control.bullet_mode = bullet_holdon;
         }
     }
 }
@@ -327,4 +332,5 @@ void gimbal_board_cmd::send_cmd_and_data() {
     gimbal_puber.push(&gimbal_control);
     shoot_puber.push(&shoot_control);
     sender.send(board_send);
+    pc.send(pc.pc_send_data);
 }

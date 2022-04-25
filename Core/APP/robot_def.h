@@ -34,7 +34,7 @@ enum Chassis_mode {
 
 //拨弹轮运行模式
 enum Bullet_mode {
-    bullet_stop = 0,
+    bullet_holdon = 0,
     bullet_reverse,    //反转，卡弹处理
     bullet_single,     //单发
     bullet_double,     //双发
@@ -42,10 +42,10 @@ enum Bullet_mode {
     bullet_continuous  //连发
 };
 
-//摩擦轮运行模式
-enum Friction_mode {
-    friction_stop = 0,  // 关闭摩擦轮
-    friction_run,       // 开启摩擦轮
+//发射机构模式
+enum Shoot_mode {
+    shoot_stop = 0,  // 关闭摩擦轮
+    shoot_run,       // 开启摩擦轮
 };
 
 //弹仓盖模式
@@ -93,7 +93,7 @@ struct cmd_chassis {
 
 // 对发射机构的控制量
 struct cmd_shoot {
-    Friction_mode friction_mode;
+    Shoot_mode shoot_mode;
     Bullet_mode bullet_mode;
     Magazine_mode mag_mode;
     uint16_t bullet_speed;       //弹速 m/s

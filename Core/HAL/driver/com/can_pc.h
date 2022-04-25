@@ -24,6 +24,7 @@ class canpc {
 
    public:
     pc_recv* pc_recv_data;
+    pc_send pc_send_data;
     uint8_t* data_updated;
     canpc(const canpc_config& _config);
     void send(const pc_send& data);
