@@ -314,7 +314,7 @@ void gimbal_board_cmd::mouse_key_mode_update() {
         shoot_control.shoot_mode = shoot_stop;
     } else {
         //发弹控制，单发，双发, 射频和小电脑控制待完善
-        shoot_control.shoot_mode = shoot_stop;                       //开摩擦轮
+        shoot_control.shoot_mode = shoot_run;                       //开摩擦轮
         shoot_control.heat_limit_remain = board_recv->heat_limit_remain;  //下板传回的热量剩余
         shoot_control.bullet_speed = board_recv->bullet_speed_max;        //下板传回的子弹速度上限
         shoot_control.fire_rate = 3;                                      //固定射频
